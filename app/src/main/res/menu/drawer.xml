@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="right"
+    android:layoutDirection="rtl"
+    android:textDirection="rtl">
+
+
+
+    <item
+        android:id="@+id/about"
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="درباره ما"
+        />
+    <item
+        android:id="@+id/tamas"
+        android:icon="@drawable/ic_call_black_24dp"
+        android:title="تماس با ما"
+        />
+
+
+</menu>

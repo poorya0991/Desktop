@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.mrpteam.amozesh.MyTextview;
 import com.mrpteam.amozesh.R;
 import com.squareup.picasso.Picasso;
 
@@ -61,6 +62,8 @@ public class vidadapter extends RecyclerView.Adapter<vidadapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int listPosition) {
         ImageView imgimg = holder.imgimg;
+        MyTextview titleTxt = holder.titleTxt;
+        titleTxt.setText(catlists.get(listPosition).getName());
         int id = catlists.get(listPosition).getId();
         String img = catlists.get(listPosition).getImg();
         holder.id=id;
@@ -81,11 +84,14 @@ public class vidadapter extends RecyclerView.Adapter<vidadapter.ViewHolder> {
     class ViewHolder extends RecyclerView.ViewHolder {
         public String img,video;
         public ImageView imgimg;
+        MyTextview titleTxt;
         public int id;
 
         public ViewHolder(View itemView) {
             super(itemView);
             imgimg =  itemView.findViewById(R.id.img);
+            titleTxt =  itemView.findViewById(R.id.title);
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

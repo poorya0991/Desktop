@@ -1,8 +1,13 @@
 package com.mrpteam.amozesh;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -44,70 +49,25 @@ import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
-    ArrayList<CatModel> catList;
-    catadapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        catList = new ArrayList<>();
-        try {
-            ProviderInstaller.installIfNeeded(getApplicationContext());
-        } catch (GooglePlayServicesRepairableException e) {
-            e.printStackTrace();
-        } catch (GooglePlayServicesNotAvailableException e) {
-            e.printStackTrace();
-        }
-        getcat();
+        new Handler().postDelayed(new Runnable() {
 
-        RecyclerView recyclerView = findViewById(R.id.rv);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new catadapter(this, catList, new catadapter.OnItemClickListener() {
+
             @Override
-            public void onItemClick(CatModel image) {
+            public void run() {
 
-                Intent i = new Intent(MainActivity.this, Movielist.class);
-                i.putExtra("id", image.getId());
+                Intent i = new Intent(MainActivity.this, Cats.class);
                 startActivity(i);
+                finish();
             }
-
-        });
-        recyclerView.setAdapter(adapter);
-
+        }, 1500);
 
     }
 
-    public void getcat(){
 
-
-        HttpsTrustManager.allowAllSSL();
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, "https://www.rosependar.ir/project/toys/cats.json", null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    for(int i=0;i<response.length(); i++){
-                        JSONObject obj = (JSONObject) response.get(i);
-                        CatModel catModel = new CatModel(obj.getInt("id"),obj.getString("name"),obj.getString("img"));
-                        if (catModel != null){
-                            catList.add(catModel);
-                        }
-                    }
-                    Log.i("", "onResponse: ");
-                    adapter.notifyDataSetChanged();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("", "onErrorResponse: ");
-            }
-        });
-        jsonArrayRequest.setShouldCache(false);
-        requestQueue.add(jsonArrayRequest);
-    }
 }
