@@ -47,7 +47,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
         app:layout_constraintEnd_toEndOf="@+id/toolbar"
         app:layout_constraintTop_toTopOf="@+id/toolbar"
-        app:srcCompat="@drawable/ic_menu_black_24dp" />
+        app:srcCompat="@drawable/ic_arrow_forward_black_24dp" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv"

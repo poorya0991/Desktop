@@ -38,6 +38,11 @@ public class catadapter extends RecyclerView.Adapter<catadapter.ViewHolder> {
 
     }
 
+    public void newlist(ArrayList<CatModel> catList){
+        this.catlists=catList;
+       notifyDataSetChanged();
+    }
+
     // get the size of the list
     @Override
     public int getItemCount() {

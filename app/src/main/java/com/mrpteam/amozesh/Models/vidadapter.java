@@ -41,6 +41,11 @@ public class vidadapter extends RecyclerView.Adapter<vidadapter.ViewHolder> {
 
     }
 
+    public void newlist(ArrayList<VidModel> catList){
+        this.catlists=catList;
+        notifyDataSetChanged();
+    }
+
     // get the size of the list
     @Override
     public int getItemCount() {

@@ -2,9 +2,12 @@ package com.mrpteam.amozesh;
 
 import android.Manifest;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -30,6 +33,8 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mrpteam.amozesh.Models.CatModel;
 import com.mrpteam.amozesh.Models.HttpsTrustManager;
 import com.mrpteam.amozesh.Models.catadapter;
@@ -38,6 +43,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class Cats extends AppCompatActivity {
@@ -46,6 +52,7 @@ public class Cats extends AppCompatActivity {
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     private Typeface sans;
+    SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +63,8 @@ public class Cats extends AppCompatActivity {
         drawerLayout = (DrawerLayout)findViewById(R.id.drawerlayout);
         navigationView = (NavigationView) findViewById(R.id.navigationview);
         View headerView = navigationView.getHeaderView(0);
+
+        pref=Cats.this.getSharedPreferences("amozesh", MODE_PRIVATE);
 
         ImageView menuimg = (ImageView) findViewById(R.id.menuimg);
         menuimg.setOnClickListener(new View.OnClickListener() {
@@ -110,7 +119,8 @@ public class Cats extends AppCompatActivity {
         } catch (GooglePlayServicesNotAvailableException e) {
             e.printStackTrace();
         }
-        getcat();
+
+
 
         RecyclerView recyclerView = findViewById(R.id.rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -126,6 +136,19 @@ public class Cats extends AppCompatActivity {
         });
         recyclerView.setAdapter(adapter);
 
+        if(isNetworkConnected()){
+            getcat();
+
+        }
+        else {
+            Gson gson = new Gson();
+            String json = pref.getString("cats","");
+            Type type= new TypeToken<ArrayList<CatModel>>(){}.getType();
+            catList = gson.fromJson(json,type);
+            adapter.newlist(catList);
+            Log.i("", "onCreate: ");
+        }
+
     }
 
     public void getcat(){
@@ -137,6 +160,7 @@ public class Cats extends AppCompatActivity {
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, "https://www.rosependar.ir/project/toys/cats.json", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
+                Log.i("", "onResponse: ");
                 try {
                     for(int i=0;i<response.length(); i++){
                         JSONObject obj = (JSONObject) response.get(i);
@@ -147,6 +171,10 @@ public class Cats extends AppCompatActivity {
                     }
                     Log.i("", "onResponse: ");
                     adapter.notifyDataSetChanged();
+                    String json = new Gson().toJson(catList);
+                    pref.edit().putString("cats",json).apply();
+                    System.out.println(json);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -181,6 +209,8 @@ public class Cats extends AppCompatActivity {
         }
     }
 
+
+
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(Gravity.RIGHT)) {
@@ -190,5 +220,11 @@ public class Cats extends AppCompatActivity {
           finish();
         }
 
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
     }
 }

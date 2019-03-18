@@ -2,8 +2,11 @@ package com.mrpteam.amozesh;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +25,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mrpteam.amozesh.Models.CatModel;
 import com.mrpteam.amozesh.Models.HttpsTrustManager;
 import com.mrpteam.amozesh.Models.VidModel;
@@ -37,6 +42,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -47,13 +53,16 @@ public class Movielist extends AppCompatActivity {
     String name;
     int id;
     private Typeface sans;
+    private SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movielist);
+
+        pref=Movielist.this.getSharedPreferences("amozesh", MODE_PRIVATE);
+
         catList = new ArrayList<>();
-        getcat();
 
         ImageView backimg = findViewById(R.id.backimg);
         backimg.setOnClickListener(new View.OnClickListener() {
@@ -96,6 +105,29 @@ public class Movielist extends AppCompatActivity {
         });
         recyclerView.setAdapter(adapter);
 
+        if(isNetworkConnected()){
+            getcat();
+
+        }
+        else {
+            Gson gson = new Gson();
+            String json = pref.getString("vids","");
+            Type type= new TypeToken<ArrayList<VidModel>>(){}.getType();
+            catList = gson.fromJson(json,type);
+            ArrayList<VidModel> catlist2=new ArrayList <>();
+            for(int i=0;i<catList.size(); i++){
+                if(catList.get(i).getId()==id){
+                    catlist2.add(catList.get(i));
+                }
+            }
+
+            Log.i("", "onResponse: ");
+            adapter.newlist(catlist2);
+
+
+            Log.i("", "onCreate: ");
+        }
+
 
     }
     public void getcat(){
@@ -110,16 +142,27 @@ public class Movielist extends AppCompatActivity {
                 try {
                     for(int i=0;i<response.length(); i++){
                         JSONObject obj = (JSONObject) response.get(i);
-                        if (obj.getInt("cat")==id){
+
                             VidModel vidmodel = new VidModel(obj.getInt("cat"),obj.getString("name"),obj.getString("img"),obj.getString("video"));
                             if (vidmodel != null){
                                 catList.add(vidmodel);
                             }
-                        }
+
 
                     }
+                    String json = new Gson().toJson(catList);
+                    pref.edit().putString("vids",json).apply();
+
+                    ArrayList<VidModel> catlist2=new ArrayList <>();
+                    for(int i=0;i<catList.size(); i++){
+                        if(catList.get(i).getId()==id){
+                            catlist2.add(catList.get(i));
+                        }
+                    }
+
+
                     Log.i("", "onResponse: ");
-                    adapter.notifyDataSetChanged();
+                    adapter.newlist(catlist2);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -243,5 +286,11 @@ public class Movielist extends AppCompatActivity {
 
             startActivity(i);
         }
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
     }
 }
