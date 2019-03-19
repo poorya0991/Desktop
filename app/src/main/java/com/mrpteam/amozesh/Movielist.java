@@ -276,9 +276,7 @@ public class Movielist extends AppCompatActivity {
             // dismiss the dialog after the file was downloaded
             this.progressDialog.dismiss();
 
-            // Display File path after downloading
-            Toast.makeText(getApplicationContext(),
-                    message, Toast.LENGTH_LONG).show();
+
 
             Intent i = new Intent(Movielist.this, Full.class);
             i.putExtra("id", message);
