@@ -83,7 +83,7 @@ public class Movielist extends AppCompatActivity {
 
                name=image.getName();
               String  fileName = image.getVideo().substring(image.getVideo().lastIndexOf('/') + 1, image.getVideo().length());
-               String patch=  Environment.getExternalStorageDirectory() + File.separator + "androiddeft/"+fileName;
+               String patch=  Environment.getExternalStorageDirectory() + File.separator + ".androiddeft/"+fileName;
                 File file = new File( patch );
 
 
@@ -220,7 +220,7 @@ public class Movielist extends AppCompatActivity {
                 //Append timestamp to file name
 
                 //External directory path to save file
-                folder = Environment.getExternalStorageDirectory() + File.separator + "androiddeft/";
+                folder = Environment.getExternalStorageDirectory() + File.separator + ".androiddeft/";
 
                 //Create androiddeft folder if it does not exist
                 File directory = new File(folder);
