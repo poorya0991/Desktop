@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         app:itemIconPadding="10dp"
         app:itemIconTint="@color/colorPrimary"
-        app:itemTextColor="@color/colorPrimary"
+
         android:background="#e7e7e7"
         android:layout_gravity="end"
         android:layoutDirection="rtl"

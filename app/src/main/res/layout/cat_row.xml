@@ -38,7 +38,7 @@
         android:paddingRight="5dp"
         android:text="njnjjkbjkjbkkjbvhjkjvljvvlhvlhhvlhvlhvklvlhkvhklhk"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textColor="@color/primaryColor"
+        android:textColor="@color/primaryDarkColor"
         app:layout_constraintBottom_toBottomOf="@+id/img"
         app:layout_constraintEnd_toEndOf="@+id/img"
         app:layout_constraintStart_toStartOf="@+id/img"
